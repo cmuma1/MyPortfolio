@@ -5,41 +5,40 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 
-// import your route files
 import contactRoutes from "./routes/contactRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import qualificationRoutes from "./routes/qualificationRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import meRoutes from "./routes/meRoutes.js";
 
-dotenv.config(); // load .env file
+dotenv.config(); // load env vars (MONGODB_URI, PORT, etc.)
 
 const app = express();
 
-// ====== MIDDLEWARE ======
-app.use(cors());              // allow frontend to call backend
-app.use(express.json());      // parse JSON bodies
+// middleware
+app.use(cors());
+app.use(express.json());
 
-// ====== ROUTES ======
+// API routes
 app.use("/api/contacts", contactRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/qualifications", qualificationRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/", meRoutes); // includes /me protected route, and we’ll also add a root message
 
-// Simple health-check route for Part II of assignment
-app.get("/", (req, res) => {
-  res.send("Server is running successfully!");
+
+app.use("/me", meRoutes);
+
+app.get("/", (_req, res) => {
+  res.json({ message: "Welcome to My Portfolio application." });
 });
 
-// ====== START SERVER AFTER DB CONNECTS ======
-const PORT = process.env.PORT || 5000;
+
+const PORT = process.env.PORT || 3000;
 
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("✅ MongoDB connected successfully!");
-
     app.listen(PORT, () => {
       console.log(`🚀 Server is running on port ${PORT}`);
     });
