@@ -6,15 +6,26 @@ import {
   updateContact,
   deleteContact,
   deleteAllContacts
-} from "../controllers/contactControllers.js";
+} from "../controllers/contactController.js";
 
 const router = express.Router();
 
-router.get("/", getContacts);
-router.get("/:id", getContactById);
-router.post("/", createContact);
-router.put("/:id", updateContact);
-router.delete("/:id", deleteContact);
-router.delete("/", deleteAllContacts);
+// READ all contacts
+router.get("/getContacts", getContacts);
+
+// READ single contact
+router.get("/getContact/:id", getContactById);
+
+// CREATE contact
+router.post("/createContact", createContact);
+
+// UPDATE contact
+router.put("/updateContact/:id", updateContact);
+
+// DELETE one contact
+router.delete("/deleteContact/:id", deleteContact);
+
+// DELETE all contacts
+router.delete("/deleteAllContacts", deleteAllContacts);
 
 export default router;

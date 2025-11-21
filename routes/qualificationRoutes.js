@@ -6,7 +6,7 @@ import {
   updateQualification,
   deleteQualification,
   deleteAllQualifications
-} from "../controllers/qualificationControllers.js";
+} from "../controllers/qualificationController.js";
 
 const router = express.Router();
 
