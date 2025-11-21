@@ -10,11 +10,23 @@ import {
 
 const router = express.Router();
 
-router.get("/", getQualifications);
-router.get("/:id", getQualificationById);
-router.post("/", createQualification);
-router.put("/:id", updateQualification);
-router.delete("/:id", deleteQualification);
-router.delete("/", deleteAllQualifications);
+// READ all qualifications
+router.get("/getQualifications", getQualifications);
+
+// READ single qualification
+router.get("/getQualification/:id", getQualificationById);
+
+// CREATE qualification
+router.post("/createQualification", createQualification);
+
+// UPDATE qualification
+router.put("/updateQualification/:id", updateQualification);
+
+// DELETE one qualification
+router.delete("/deleteQualification/:id", deleteQualification);
+
+// DELETE all qualifications
+router.delete("/deleteAllQualifications", deleteAllQualifications);
 
 export default router;
+
