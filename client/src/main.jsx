@@ -1,13 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { HashRouter } from "react-router-dom";
-import MainRouter from "./MainRouter.jsx";
-import "./index.css"; // ok if you don't have this; remove the line if not
+import App from "./App.jsx";
+import "./index.css"; // keep this if you have it
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <HashRouter>
-      <MainRouter />
-    </HashRouter>
+    <App />
   </React.StrictMode>
 );

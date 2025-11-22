@@ -1,22 +1,20 @@
-// client/src/components/Projects.jsx
+// client/src/components/Qualifications.jsx
 import { useEffect, useState } from "react";
 
 const API_BASE = "http://localhost:3000";
 
-function Projects() {
-  const [projects, setProjects] = useState([]);
+function Qualifications() {
+  const [qualifications, setQualifications] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
-    description: "",
+    institution: "",
     year: "",
-    techStack: "",
-    link: "",
+    description: "",
   });
   const [status, setStatus] = useState("");
 
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Load current user from localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -31,10 +29,9 @@ function Projects() {
   const isAdmin = currentUser?.role === "admin";
   const token = localStorage.getItem("token");
 
-  // Fetch all projects from API
-  async function fetchProjects() {
+  async function fetchQualifications() {
     try {
-      const res = await fetch(`${API_BASE}/api/projects`);
+      const res = await fetch(`${API_BASE}/api/qualifications`);
       const contentType = res.headers.get("content-type") || "";
 
       if (!contentType.includes("application/json")) {
@@ -43,17 +40,16 @@ function Projects() {
       }
 
       const data = await res.json();
-      setProjects(data);
+      setQualifications(data);
     } catch (err) {
-      setStatus(err.message || "Failed to load projects");
+      setStatus(err.message || "Failed to load qualifications");
     }
   }
 
   useEffect(() => {
-    fetchProjects();
+    fetchQualifications();
   }, []);
 
-  // Handle form input change
   function handleChange(e) {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -62,18 +58,17 @@ function Projects() {
     }));
   }
 
-  // Submit new project (admin only)
   async function handleSubmit(e) {
     e.preventDefault();
     setStatus("");
 
     if (!isAdmin) {
-      setStatus("Only admin users can add projects.");
+      setStatus("Only admin users can add qualifications.");
       return;
     }
 
     try {
-      const res = await fetch(`${API_BASE}/api/projects`, {
+      const res = await fetch(`${API_BASE}/api/qualifications`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,7 +76,7 @@ function Projects() {
         },
         body: JSON.stringify({
           ...formData,
-          year: formData.year ? Number(formData.year) : undefined,
+          year: Number(formData.year),
         }),
       });
 
@@ -96,36 +91,34 @@ function Projects() {
       }
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed to create project");
+        throw new Error(data.message || "Failed to create qualification");
       }
 
-      setStatus("Project added successfully!");
+      setStatus("Qualification added successfully!");
       setFormData({
         title: "",
-        description: "",
+        institution: "",
         year: "",
-        techStack: "",
-        link: "",
+        description: "",
       });
 
-      await fetchProjects();
+      await fetchQualifications();
     } catch (err) {
       setStatus(err.message || "Something went wrong");
     }
   }
 
-  // Delete project (admin only)
   async function handleDelete(id) {
     if (!isAdmin) {
-      setStatus("Only admin users can delete projects.");
+      setStatus("Only admin users can delete qualifications.");
       return;
     }
 
-    if (!window.confirm("Are you sure you want to delete this project?"))
+    if (!window.confirm("Are you sure you want to delete this qualification?"))
       return;
 
     try {
-      const res = await fetch(`${API_BASE}/api/projects/${id}`, {
+      const res = await fetch(`${API_BASE}/api/qualifications/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: token ? `Bearer ${token}` : "",
@@ -143,39 +136,35 @@ function Projects() {
       }
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed to delete project");
+        throw new Error(data.message || "Failed to delete qualification");
       }
 
-      setStatus("Project deleted.");
-      setProjects((prev) => prev.filter((p) => p._id !== id));
+      setStatus("Qualification deleted.");
+      setQualifications((prev) => prev.filter((q) => q._id !== id));
     } catch (err) {
       setStatus(err.message || "Something went wrong");
     }
   }
 
-  // Sort projects by year (newest first if year exists)
-  const sortedProjects = [...projects].sort((a, b) => {
-    if (!a.year) return 1;
-    if (!b.year) return -1;
-    return b.year - a.year;
-  });
+  const sortedQualifications = [...qualifications].sort(
+    (a, b) => b.year - a.year
+  );
 
   return (
-    <div style={{ maxWidth: 900, margin: "2rem auto" }}>
-      <h2>Projects</h2>
+    <div style={{ maxWidth: 800, margin: "2rem auto" }}>
+      <h2>Qualifications</h2>
 
       <p style={{ marginBottom: "1.5rem", color: "#4b5563" }}>
-        Here are some of the projects I have worked on.
+        Below is a list of my completed qualifications.
       </p>
 
-      {/* Project list */}
-      {sortedProjects.length === 0 ? (
-        <p>No projects added yet.</p>
+      {sortedQualifications.length === 0 ? (
+        <p>No qualifications added yet.</p>
       ) : (
         <ul style={{ listStyle: "none", padding: 0, marginBottom: "2rem" }}>
-          {sortedProjects.map((p) => (
+          {sortedQualifications.map((q) => (
             <li
-              key={p._id}
+              key={q._id}
               style={{
                 padding: "1rem 1.25rem",
                 borderRadius: "8px",
@@ -184,50 +173,30 @@ function Projects() {
                 background: "#ffffff",
                 display: "flex",
                 justifyContent: "space-between",
-                gap: "1rem",
               }}
             >
               <div>
                 <h3 style={{ margin: 0 }}>
-                  {p.title}{" "}
-                  {p.year && (
-                    <span style={{ fontWeight: 400, color: "#6b7280" }}>
-                      • {p.year}
-                    </span>
-                  )}
+                  {q.title}
+                  <span style={{ fontWeight: 400, color: "#6b7280" }}>
+                    {" "}
+                    • {q.institution}
+                  </span>
                 </h3>
-
-                {p.techStack && (
-                  <p style={{ margin: "0.25rem 0", color: "#4b5563" }}>
-                    <strong>Tech:</strong> {p.techStack}
-                  </p>
-                )}
-
-                {p.description && (
-                  <p style={{ margin: "0.25rem 0", color: "#4b5563" }}>
-                    {p.description}
-                  </p>
-                )}
-
-                {p.link && (
-                  <p style={{ margin: "0.25rem 0" }}>
-                    <a
-                      href={p.link}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{ color: "#2563eb" }}
-                    >
-                      View project
-                    </a>
+                <p style={{ margin: "0.25rem 0", color: "#4b5563" }}>
+                  Year: {q.year}
+                </p>
+                {q.description && (
+                  <p style={{ margin: 0, color: "#4b5563" }}>
+                    {q.description}
                   </p>
                 )}
               </div>
 
               {isAdmin && (
                 <button
-                  onClick={() => handleDelete(p._id)}
+                  onClick={() => handleDelete(q._id)}
                   style={{
-                    alignSelf: "center",
                     padding: "0.35rem 0.75rem",
                     fontSize: "0.85rem",
                     backgroundColor: "#b91c1c",
@@ -242,10 +211,9 @@ function Projects() {
         </ul>
       )}
 
-      {/* Admin-only form */}
       {isAdmin ? (
         <section>
-          <h3>Add New Project</h3>
+          <h3>Add New Qualification</h3>
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: "0.75rem" }}>
               <label>Title</label>
@@ -260,12 +228,13 @@ function Projects() {
             </div>
 
             <div style={{ marginBottom: "0.75rem" }}>
-              <label>Description</label>
-              <textarea
-                name="description"
-                value={formData.description}
+              <label>Institution</label>
+              <input
+                type="text"
+                name="institution"
+                value={formData.institution}
                 onChange={handleChange}
-                rows={3}
+                required
                 style={{ width: "100%", padding: "0.5rem" }}
               />
             </div>
@@ -277,38 +246,28 @@ function Projects() {
                 name="year"
                 value={formData.year}
                 onChange={handleChange}
+                required
                 style={{ width: "100%", padding: "0.5rem" }}
               />
             </div>
 
             <div style={{ marginBottom: "0.75rem" }}>
-              <label>Tech Stack (e.g. MERN, Node, React)</label>
-              <input
-                type="text"
-                name="techStack"
-                value={formData.techStack}
+              <label>Description (optional)</label>
+              <textarea
+                name="description"
+                value={formData.description}
                 onChange={handleChange}
+                rows={3}
                 style={{ width: "100%", padding: "0.5rem" }}
               />
             </div>
 
-            <div style={{ marginBottom: "0.75rem" }}>
-              <label>Project Link (optional)</label>
-              <input
-                type="url"
-                name="link"
-                value={formData.link}
-                onChange={handleChange}
-                style={{ width: "100%", padding: "0.5rem" }}
-              />
-            </div>
-
-            <button type="submit">Save Project</button>
+            <button type="submit">Save Qualification</button>
           </form>
         </section>
       ) : (
         <p style={{ color: "#6b7280" }}>
-          Log in as an admin to add or remove projects.
+          Log in as an admin to add or remove qualifications.
         </p>
       )}
 
@@ -328,4 +287,5 @@ function Projects() {
   );
 }
 
-export default Projects;
+export default Qualifications;
+

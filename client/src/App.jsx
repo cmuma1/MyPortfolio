@@ -1,15 +1,31 @@
-import { useState } from 'react'
-import './App.css'
-import MainRouter from './MainRouter.jsx'
+// client/src/App.jsx
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import Home from "./components/Home";
+import Login from "./components/Login";
+import About from "./components/About";
+import Qualifications from "./components/Qualifications";
+import Projects from "./components/Projects";
+import Contact from "./components/Contact";
 
 function App() {
-
-
   return (
-    <>
-      <MainRouter />
-    </>
-  )
+    <Router>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/about" element={<About />} />
+
+          {/* URL is /education but it shows the Qualifications page */}
+          <Route path="/education" element={<Qualifications />} />
+
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/contact" element={<Contact />} />
+        </Routes>
+      </Layout>
+    </Router>
+  );
 }
 
 export default App;
