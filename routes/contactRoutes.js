@@ -1,3 +1,4 @@
+// routes/contactRoutes.js
 import express from "express";
 import {
   getContacts,
@@ -5,27 +6,27 @@ import {
   createContact,
   updateContact,
   deleteContact,
-  deleteAllContacts
+  deleteAllContacts,
 } from "../controllers/contactController.js";
 
 const router = express.Router();
 
-// READ all contacts
-router.get("/getContacts", getContacts);
+// GET /api/contacts
+router.get("/", getContacts);
 
-// READ single contact
-router.get("/getContact/:id", getContactById);
+// GET /api/contacts/:id
+router.get("/:id", getContactById);
 
-// CREATE contact
-router.post("/createContact", createContact);
+// POST /api/contacts
+router.post("/", createContact);
 
-// UPDATE contact
-router.put("/updateContact/:id", updateContact);
+// PUT /api/contacts/:id
+router.put("/:id", updateContact);
 
-// DELETE one contact
-router.delete("/deleteContact/:id", deleteContact);
+// DELETE /api/contacts/:id
+router.delete("/:id", deleteContact);
 
-// DELETE all contacts
-router.delete("/deleteAllContacts", deleteAllContacts);
+// DELETE /api/contacts
+router.delete("/", deleteAllContacts);
 
 export default router;

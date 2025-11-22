@@ -4,10 +4,11 @@ import User from "../models/user.js";
 // GET /api/users/getUsers
 export const getUsers = async (req, res) => {
   try {
-    const users = await User.find().select("-password"); 
+    const users = await User.find().select("-password"); // don't send password hashes
     res.json(users);
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    console.error("getUsers error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -20,38 +21,81 @@ export const getUserById = async (req, res) => {
     }
     res.json(user);
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    console.error("getUserById error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-// POST /api/users/createUser
-
+// POST /api/users/createUser   (admin use)
+// POST /api/users/signup       (signup route reuses this)
 export const createUser = async (req, res) => {
   try {
-    const user = new User(req.body);
-    const saved = await user.save();
-    res.status(201).json(saved);
+    const { firstname, lastname, email, password, role } = req.body;
+
+    if (!firstname || !lastname || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const exists = await User.findOne({ email });
+    if (exists) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
+
+    const user = await User.create({
+      firstname,
+      lastname,
+      email,
+      password,  // will be hashed by the pre('save') middleware
+      role: role || "user",
+    });
+
+    res.status(201).json({
+      message: "User created successfully",
+      user: {
+        id: user._id,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (err) {
-    res.status(400).json({ message: "Bad request", error: err.message });
+    console.error("createUser error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
 // PUT /api/users/updateUser/:id
 export const updateUser = async (req, res) => {
   try {
-    const updated = await User.findByIdAndUpdate(
-      req.params.id,
-      { ...req.body, updated: new Date() },
-      { new: true, runValidators: true }
-    ).select("-password");
+    const { firstname, lastname, email, password, role } = req.body;
 
-    if (!updated) {
+    const user = await User.findById(req.params.id);
+    if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.json(updated);
+    if (firstname !== undefined) user.firstname = firstname;
+    if (lastname !== undefined)  user.lastname = lastname;
+    if (email !== undefined)     user.email = email;
+    if (password !== undefined)  user.password = password; // will be re-hashed
+    if (role !== undefined)      user.role = role;
+
+    await user.save();
+
+    res.json({
+      message: "User updated successfully",
+      user: {
+        id: user._id,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (err) {
-    res.status(400).json({ message: "Bad request", error: err.message });
+    console.error("updateUser error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -59,26 +103,24 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const deleted = await User.findByIdAndDelete(req.params.id);
-
     if (!deleted) {
       return res.status(404).json({ message: "User not found" });
     }
-
-    res.json({ message: "User deleted", id: deleted._id });
+    res.json({ message: "User deleted successfully" });
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    console.error("deleteUser error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
 // DELETE /api/users/deleteAllUsers
-export const deleteAllUsers = async (req, res) => {
+export const deleteAllUsers = async (_req, res) => {
   try {
-    const result = await User.deleteMany({});
-    res.json({
-      message: "All users deleted",
-      deletedCount: result.deletedCount,
-    });
+    await User.deleteMany({});
+    res.json({ message: "All users deleted" });
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    console.error("deleteAllUsers error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
+

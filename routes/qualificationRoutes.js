@@ -1,3 +1,4 @@
+// routes/qualificationRoutes.js
 import express from "express";
 import {
   getQualifications,
@@ -5,28 +6,28 @@ import {
   createQualification,
   updateQualification,
   deleteQualification,
-  deleteAllQualifications
+  deleteAllQualifications,
 } from "../controllers/qualificationController.js";
 
 const router = express.Router();
 
-// READ all qualifications
-router.get("/getQualifications", getQualifications);
+// GET /api/qualifications
+router.get("/", getQualifications);
 
-// READ single qualification
-router.get("/getQualification/:id", getQualificationById);
+// GET /api/qualifications/:id
+router.get("/:id", getQualificationById);
 
-// CREATE qualification
-router.post("/createQualification", createQualification);
+// POST /api/qualifications
+router.post("/", createQualification);
 
-// UPDATE qualification
-router.put("/updateQualification/:id", updateQualification);
+// PUT /api/qualifications/:id
+router.put("/:id", updateQualification);
 
-// DELETE one qualification
-router.delete("/deleteQualification/:id", deleteQualification);
+// DELETE /api/qualifications/:id
+router.delete("/:id", deleteQualification);
 
-// DELETE all qualifications
-router.delete("/deleteAllQualifications", deleteAllQualifications);
+// DELETE /api/qualifications
+router.delete("/", deleteAllQualifications);
 
 export default router;
 

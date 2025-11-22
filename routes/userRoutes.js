@@ -6,27 +6,27 @@ import {
   createUser,
   updateUser,
   deleteUser,
-  deleteAllUsers,
+  deleteAllUsers
 } from "../controllers/userController.js";
 
 const router = express.Router();
 
-// READ all users
+// GET all users
 router.get("/getUsers", getUsers);
 
-// READ single user
+// GET single user by ID
 router.get("/getUser/:id", getUserById);
 
-// CREATE user
+// CREATE a user
 router.post("/createUser", createUser);
 
-// UPDATE user
+// UPDATE a user
 router.put("/updateUser/:id", updateUser);
 
 // DELETE one user
 router.delete("/deleteUser/:id", deleteUser);
 
-// DELETE all users
+// DELETE ALL users
 router.delete("/deleteAllUsers", deleteAllUsers);
 
 export default router;

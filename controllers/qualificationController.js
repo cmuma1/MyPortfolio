@@ -1,12 +1,11 @@
 // controllers/qualificationController.js
-
 import Qualification from "../models/qualification.js";
 
 // GET /api/qualifications
 export const getQualifications = async (req, res) => {
   try {
-    const data = await Qualification.find();
-    res.json(data);
+    const items = await Qualification.find();
+    res.json(items);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }
@@ -15,11 +14,11 @@ export const getQualifications = async (req, res) => {
 // GET /api/qualifications/:id
 export const getQualificationById = async (req, res) => {
   try {
-    const qualification = await Qualification.findById(req.params.id);
-    if (!qualification) {
+    const item = await Qualification.findById(req.params.id);
+    if (!item) {
       return res.status(404).json({ message: "Qualification not found" });
     }
-    res.json(qualification);
+    res.json(item);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }
@@ -28,8 +27,8 @@ export const getQualificationById = async (req, res) => {
 // POST /api/qualifications
 export const createQualification = async (req, res) => {
   try {
-    const qualification = new Qualification(req.body);
-    const saved = await qualification.save();
+    const item = new Qualification(req.body);
+    const saved = await item.save();
     res.status(201).json(saved);
   } catch (err) {
     res.status(400).json({ message: "Bad request", error: err.message });
