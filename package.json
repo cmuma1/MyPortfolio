@@ -2,7 +2,7 @@
   "name": "mern_skeleton",
   "version": "1.0.0",
   "type": "module",
-  "main": "index.js",
+  "main": "server.js",
   "author": "Blessing",
   "license": "MIT",
   "devDependencies": {
@@ -13,10 +13,11 @@
     "nodemon": "^3.1.10"
   },
   "scripts": {
-    "dev": "concurrently \"vite\" \"nodemon ../server.js\"",
-    "build": "vite build",
-    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "start:client": "npm --prefix client run dev",
+    "start:all": "concurrently \"npm run dev\" \"npm run start:client\"",
+    "build": "npm --prefix client run build"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -29,6 +30,11 @@
     "global": "^4.4.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.19.2"
+    "mongoose": "^8.19.2",
+    "morgan": "^1.10.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cmuma1/MyPortfolio.git"
   }
 }

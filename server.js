@@ -1,11 +1,28 @@
-// server.js
-
 import express from "express";
+import morgan from "morgan";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 
-// ROUTES THAT ARE ALREADY WORKING
+import path from "path";
+import { fileURLToPath } from "url";
+
+// ====== ENV ======
+dotenv.config();
+
+// ====== FILE PATHS (for serving React build) ======
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ====== EXPRESS APP ======
+const app = express();
+
+// ====== MIDDLEWARE ======
+app.use(cors());
+app.use(express.json());
+app.use(morgan("dev"));
+
+// ====== ROUTES THAT ARE ALREADY WORKING ======
 import contactRoutes from "./routes/contactRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import meRoutes from "./routes/meRoutes.js";
@@ -15,23 +32,14 @@ import userRoutes from "./routes/userRoutes.js";
 import Project from "./models/project.js";
 import Qualification from "./models/qualification.js";
 
-dotenv.config();
-
-// 1) Create express app
-const app = express();
-
-// 2) Middleware
-app.use(cors());
-app.use(express.json());
-
-// 3) Existing route groups
+// GROUPED ROUTES
 app.use("/api/contacts", contactRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/me", meRoutes);
 app.use("/api/users", userRoutes);
 
 // ------------------------------------------------------------------
-// 4) DIRECT PROJECTS ROUTES  (no projectRoutes file needed)
+//  PROJECTS ROUTES
 // ------------------------------------------------------------------
 
 // GET /api/projects - list all projects
@@ -112,7 +120,7 @@ app.delete("/api/projects", async (req, res) => {
 });
 
 // ------------------------------------------------------------------
-// 5) DIRECT QUALIFICATIONS ROUTES  (already working for you)
+//  QUALIFICATIONS ROUTES
 // ------------------------------------------------------------------
 
 // GET all qualifications
@@ -174,15 +182,28 @@ app.delete("/api/qualifications", async (req, res) => {
 });
 
 // ------------------------------------------------------------------
-
-// Root route – quick check
-app.get("/", (req, res) => {
+//  SIMPLE API HEALTH CHECK
+// ------------------------------------------------------------------
+app.get("/api", (req, res) => {
   res.json({ message: "Welcome to My Portfolio API" });
 });
 
 // ------------------------------------------------------------------
+//  SERVE REACT BUILD IN PRODUCTION
+// ------------------------------------------------------------------
+if (process.env.NODE_ENV === "production") {
+  // Serve static files from client/dist
+  app.use(express.static(path.join(__dirname, "client/dist")));
 
-// 6) DB + Server Start
+  // For any non-API route, send back index.html
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "client/dist/index.html"));
+  });
+}
+
+// ------------------------------------------------------------------
+//  DB + SERVER START
+// ------------------------------------------------------------------
 const PORT = process.env.PORT || 3000;
 
 mongoose
@@ -194,4 +215,5 @@ mongoose
     });
   })
   .catch((err) => console.error("❌ MongoDB Error:", err));
+
 

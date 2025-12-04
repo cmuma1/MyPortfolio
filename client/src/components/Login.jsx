@@ -18,7 +18,10 @@ function Login() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3000/api/auth/login", {
+      const API_BASE =
+        import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -34,7 +37,10 @@ function Login() {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // Go to home after login
+      // tell navbar auth changed (if you're using this)
+      window.dispatchEvent(new Event("authChange"));
+
+      // Go home
       navigate("/");
     } catch (err) {
       setError(err.message || "Something went wrong");
@@ -85,7 +91,6 @@ function Login() {
             style={{
               width: "100%",
               padding: "0.5rem",
-              color: "#eceef0ff",
             }}
           />
         </div>
@@ -108,7 +113,6 @@ function Login() {
             style={{
               width: "100%",
               padding: "0.5rem",
-              color: "#f3f7faff",
             }}
           />
         </div>
@@ -137,3 +141,4 @@ function Login() {
 }
 
 export default Login;
+
