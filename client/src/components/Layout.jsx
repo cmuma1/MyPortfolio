@@ -1,4 +1,3 @@
-// client/src/components/Layout.jsx
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -7,8 +6,10 @@ export default function Layout({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Check user every time route changes
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
+
     if (storedUser) {
       try {
         setCurrentUser(JSON.parse(storedUser));
@@ -24,7 +25,7 @@ export default function Layout({ children }) {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setCurrentUser(null);
-    navigate("/login");
+    navigate("/");
   }
 
   return (
@@ -62,7 +63,7 @@ export default function Layout({ children }) {
           </span>
         </div>
 
-        {/* MIDDLE: Nav links */}
+        {/* CENTER NAV LINKS */}
         <nav
           style={{
             display: "flex",
@@ -80,22 +81,39 @@ export default function Layout({ children }) {
           <Link style={{ color: "#2f4cff" }} to="/education">
             Education
           </Link>
-          <Link style={{ color: "#2f4cff" }} to="/projects">
-            Projects
-          </Link>
+
+          {/* Show Projects ONLY if logged in */}
+          {currentUser && (
+            <Link style={{ color: "#2f4cff" }} to="/projects">
+              Projects
+            </Link>
+          )}
+
           <Link style={{ color: "#2f4cff" }} to="/contact">
             Contact
           </Link>
+
+          {/* Show Login/Register only if NOT logged in */}
+          {!currentUser && (
+            <>
+              <Link to="/login" className="login-btn">
+                Login
+              </Link>
+              <Link to="/register" className="register-btn">
+                Register
+              </Link>
+            </>
+          )}
         </nav>
 
-        {/* RIGHT: Auth area */}
+        {/* RIGHT SIDE AUTH AREA */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
           {currentUser ? (
             <>
               <span style={{ fontSize: "0.95rem", color: "#374151" }}>
-                Hi, <strong>{currentUser.firstname}</strong> (
-                {currentUser.role})
+                Hi, <strong>{currentUser.firstname}</strong>
               </span>
+
               <button
                 onClick={handleLogout}
                 style={{
@@ -123,4 +141,3 @@ export default function Layout({ children }) {
     </>
   );
 }
-

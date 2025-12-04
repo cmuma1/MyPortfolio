@@ -7,6 +7,7 @@ import About from "./components/About";
 import Qualifications from "./components/Qualifications";
 import Projects from "./components/Projects";
 import Contact from "./components/Contact";
+import Register from "./components/Register";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/about" element={<About />} />
+          <Route path="/register" element={<Register />} />
 
           {/* URL is /education but it shows the Qualifications page */}
           <Route path="/education" element={<Qualifications />} />

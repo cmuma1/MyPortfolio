@@ -17,7 +17,11 @@ export default function Home() {
         <Link to="/about">About me</Link>
         <Link to="/projects">See projects</Link>
         <Link to="/contact">Contact</Link>
+    
       </div>
+
+ 
+
 
       <p style={{ marginTop: 16, color: "#64748b" }}>
         Mission: Keep learning, make useful tools, and share the joy of music.

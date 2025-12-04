@@ -97,7 +97,7 @@ export const loginUser = async (req, res) => {
   }
 };
 
-// optional: POST /api/auth/logout (frontend will just delete token)
+
 export const logoutUser = (req, res) => {
   res.json({ message: "Logout successful" });
 };

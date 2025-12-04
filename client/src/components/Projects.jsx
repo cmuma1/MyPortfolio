@@ -1,4 +1,3 @@
-// client/src/components/Projects.jsx
 import { useEffect, useState } from "react";
 
 const API_BASE = "http://localhost:3000";
