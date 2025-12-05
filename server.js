@@ -192,13 +192,15 @@ app.get("/api", (req, res) => {
 //  SERVE REACT BUILD IN PRODUCTION
 // ------------------------------------------------------------------
 if (process.env.NODE_ENV === "production") {
+  const clientDistPath = path.join(__dirname, "client/dist");
+
   // Serve static files from client/dist
-  app.use(express.static(path.join(__dirname, "client/dist")));
+  app.use(express.static(clientDistPath));
 
   // For any non-API route, send back index.html
-  // Use a pattern compatible with path-to-regexp v6
-  app.get("/(.*)", (req, res) => {
-    res.sendFile(path.join(__dirname, "client/dist/index.html"));
+  // RegExp: match any route that does NOT start with /api
+  app.get(/^\/(?!api).*/, (req, res) => {
+    res.sendFile(path.join(clientDistPath, "index.html"));
   });
 }
 
