@@ -13,12 +13,13 @@
     "nodemon": "^3.1.10"
   },
   "scripts": {
-    "dev": "nodemon server.js",
-    "start": "node server.js",
-    "start:client": "npm --prefix client run dev",
-    "start:all": "concurrently \"npm run dev\" \"npm run start:client\"",
-    "build": "npm --prefix client run build"
-  },
+  "dev": "nodemon server.js",
+  "start": "node server.js",
+  "start:client": "npm --prefix client run dev",
+  "start:all": "concurrently \"npm run dev\" \"npm run start:client\"",
+  "build": "npm --prefix client install && npm --prefix client run build"
+},
+
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "body-parser": "^2.2.0",
