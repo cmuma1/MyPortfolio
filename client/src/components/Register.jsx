@@ -8,9 +8,11 @@ function Register() {
     email: "",
     password: "",
   });
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
+
   const navigate = useNavigate();
 
   function handleChange(e) {
@@ -25,8 +27,8 @@ function Register() {
     setLoading(true);
 
     try {
-      const API_BASE =
-        import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+      // 🔥 FINAL: hard-coded backend URL to avoid confusion
+      const API_BASE = "http://localhost:3000";
 
       const res = await fetch(`${API_BASE}/api/auth/register`, {
         method: "POST",
@@ -41,9 +43,11 @@ function Register() {
       }
 
       setSuccess("Registration successful! You can now log in.");
+
       setTimeout(() => navigate("/login"), 1000);
     } catch (err) {
       setError(err.message || "Something went wrong");
+      console.error("REGISTER ERROR:", err);
     } finally {
       setLoading(false);
     }

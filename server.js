@@ -202,18 +202,25 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // ------------------------------------------------------------------
-//  DB + SERVER START
+//  DB + SERVER START (always start server, even if Mongo fails)
 // ------------------------------------------------------------------
 const PORT = process.env.PORT || 3000;
+
+console.log("MONGODB_URI from env:", process.env.MONGODB_URI);
 
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("✅ MongoDB connected");
+  })
+  .catch((err) => {
+    console.error(
+      "❌ MongoDB Error, but starting server anyway:",
+      err.message
+    );
+  })
+  .finally(() => {
     app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
-  })
-  .catch((err) => console.error("❌ MongoDB Error:", err));
-
-
+  });
