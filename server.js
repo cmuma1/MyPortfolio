@@ -196,8 +196,8 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "client/dist")));
 
   // For any non-API route, send back index.html
-  // Use "/*" instead of "*" to avoid path-to-regexp error on Render
-  app.get("/*", (req, res) => {
+  // Use a pattern compatible with path-to-regexp v6
+  app.get("/(.*)", (req, res) => {
     res.sendFile(path.join(__dirname, "client/dist/index.html"));
   });
 }
